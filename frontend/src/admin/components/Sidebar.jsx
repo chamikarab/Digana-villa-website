@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { 
   LayoutDashboard, 
   Home, 
@@ -17,6 +18,8 @@ function cn(...inputs) {
 }
 
 const Sidebar = () => {
+  const { user, logout } = useAuth();
+
   const navItems = [
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
     { name: 'Manage Villa', path: '/admin/villas', icon: Home },
@@ -74,12 +77,16 @@ const Sidebar = () => {
             </div>
             <div className="flex-1 overflow-hidden">
               <p className="text-sm font-semibold text-slate-800 truncate">Admin User</p>
-              <p className="text-xs text-slate-500 truncate">admin@diganavilla.com</p>
+              <p className="text-xs text-slate-500 truncate">{user?.email || 'admin@diganavilla.com'}</p>
             </div>
           </div>
         </div>
         
-        <button className="flex items-center gap-3 w-full px-3 py-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors group">
+        <button
+          type="button"
+          onClick={() => logout()}
+          className="flex items-center gap-3 w-full px-3 py-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors group"
+        >
           <LogOut size={18} className="text-slate-400 group-hover:text-red-500" />
           <span className="font-medium text-sm">Logout</span>
         </button>

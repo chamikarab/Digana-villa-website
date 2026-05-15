@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Home, Lock, Mail } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
-  const navigate = useNavigate();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -20,7 +21,7 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
 
@@ -29,9 +30,14 @@ const Login = () => {
       return;
     }
 
-    // Frontend-only mock auth. Replace with backend login API later.
-    localStorage.setItem('adminAuth', 'true');
-    navigate('/admin');
+    setIsSubmitting(true);
+    try {
+      await login(form.email, form.password);
+    } catch (err) {
+      setError(err.message || 'Login failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -55,7 +61,7 @@ const Login = () => {
             </p>
           </div>
 
-          <p className="text-xs text-slate-400">Frontend login only. Backend auth can be connected later.</p>
+          <p className="text-xs text-slate-400">Secure admin session shared across browser tabs.</p>
         </div>
 
         <div className="p-8 md:p-10">
@@ -82,6 +88,7 @@ const Login = () => {
                   onChange={handleChange}
                   placeholder="admin@diganavilla.com"
                   className="w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  disabled={isSubmitting}
                 />
               </div>
             </div>
@@ -102,12 +109,14 @@ const Login = () => {
                   onChange={handleChange}
                   placeholder="Enter your password"
                   className="w-full pl-10 pr-11 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  disabled={isSubmitting}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
                   aria-label="Toggle password visibility"
+                  disabled={isSubmitting}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -121,6 +130,7 @@ const Login = () => {
                 checked={form.remember}
                 onChange={handleChange}
                 className="rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                disabled={isSubmitting}
               />
               Remember this device
             </label>
@@ -133,14 +143,15 @@ const Login = () => {
 
             <button
               type="submit"
-              className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-2.5 rounded-xl transition-colors shadow-md shadow-primary-200"
+              disabled={isSubmitting}
+              className="w-full bg-primary-600 hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-2.5 rounded-xl transition-colors shadow-md shadow-primary-200"
             >
-              Sign In
+              {isSubmitting ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
           <p className="text-xs text-slate-500 mt-6">
-            Demo mode: any non-empty email and password will log you in.
+            Default: admin@diganavilla.com / Admin@1234
           </p>
         </div>
       </div>
