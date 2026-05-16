@@ -19,6 +19,7 @@ export async function apiRequest(path, { method = 'GET', token, body } = {}) {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
+    signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(20000) : undefined,
   });
 
   return parseResponse(response);
