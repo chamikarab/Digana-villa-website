@@ -1,9 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@diganavilla.com';
-const ADMIN_PASSWORD_HASH = bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'Admin@1234', 10);
-const JWT_SECRET = process.env.JWT_SECRET || 'digana_secret';
+import { adminEmail as ADMIN_EMAIL, adminPasswordHash as ADMIN_PASSWORD_HASH, jwtSecret as JWT_SECRET } from '../config/security.js';
 
 export const login = async (req, res, next) => {
   try {
@@ -13,11 +10,12 @@ export const login = async (req, res, next) => {
       return res.status(400).json({ success: false, error: 'Email and password are required.' });
     }
 
-    if (email.trim().toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+    const emailNormalized = String(email).trim().toLowerCase();
+    if (emailNormalized !== ADMIN_EMAIL.toLowerCase()) {
       return res.status(401).json({ success: false, error: 'Invalid credentials.' });
     }
 
-    const passwordMatches = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
+    const passwordMatches = await bcrypt.compare(String(password), ADMIN_PASSWORD_HASH);
     if (!passwordMatches) {
       return res.status(401).json({ success: false, error: 'Invalid credentials.' });
     }
