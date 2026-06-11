@@ -1,7 +1,12 @@
 export const isValidEmail = (value) => {
-  return typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+  if (typeof value !== 'string') return false;
+  const t = value.trim();
+  if (t.length === 0 || t.length > 254) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t);
 };
 
 export const isValidPassword = (value) => {
-  return typeof value === 'string' && value.trim().length >= 8;
+  if (typeof value !== 'string') return false;
+  if (value.length > 128) return false;
+  return value.length >= 8;
 };

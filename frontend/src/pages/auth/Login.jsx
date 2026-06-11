@@ -150,9 +150,11 @@ const Login = () => {
             </button>
           </form>
 
-          <p className="text-xs text-slate-500 mt-6">
-            Default: admin@diganavilla.com / Admin@1234
-          </p>
+          {import.meta.env.DEV ? (
+            <p className="text-xs text-slate-500 mt-6">
+              Local dev defaults match backend dev credentials (see backend <code className="text-slate-600">.env.example</code>).
+            </p>
+          ) : null}
         </div>
       </div>
     </div>

@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'digana_secret';
+import { jwtSecret } from '../config/security.js';
 
 export const protect = (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -10,9 +9,12 @@ export const protect = (req, res, next) => {
   }
 
   const token = authHeader.split(' ')[1];
+  if (!token || token === 'null' || token === 'undefined') {
+    return res.status(401).json({ success: false, error: 'Not authorized.' });
+  }
 
   try {
-    req.user = jwt.verify(token, JWT_SECRET);
+    req.user = jwt.verify(token, jwtSecret);
     next();
   } catch {
     return res.status(401).json({
