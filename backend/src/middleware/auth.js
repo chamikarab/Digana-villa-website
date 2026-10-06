@@ -1,14 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { jwtSecret } from '../config/security.js';
+import { getTokenFromRequest } from '../utils/authCookie.js';
 
 export const protect = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const token = getTokenFromRequest(req);
 
-  if (!authHeader?.startsWith('Bearer ')) {
-    return res.status(401).json({ success: false, error: 'Not authorized.' });
-  }
-
-  const token = authHeader.split(' ')[1];
   if (!token || token === 'null' || token === 'undefined') {
     return res.status(401).json({ success: false, error: 'Not authorized.' });
   }

@@ -1,10 +1,11 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { adminEmail as ADMIN_EMAIL, adminPasswordHash as ADMIN_PASSWORD_HASH, jwtSecret as JWT_SECRET } from '../config/security.js';
+import { clearAuthCookie, setAuthCookie } from '../utils/authCookie.js';
 
 export const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, remember } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ success: false, error: 'Email and password are required.' });
@@ -24,6 +25,8 @@ export const login = async (req, res, next) => {
       expiresIn: '8h',
     });
 
+    setAuthCookie(res, token, remember !== false);
+
     return res.json({
       success: true,
       data: {
@@ -31,7 +34,6 @@ export const login = async (req, res, next) => {
           email: ADMIN_EMAIL,
           role: 'admin',
         },
-        token,
       },
     });
   } catch (error) {
@@ -57,6 +59,7 @@ export const getMe = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
   try {
+    clearAuthCookie(res);
     return res.json({
       success: true,
       message: 'Logged out successfully.',

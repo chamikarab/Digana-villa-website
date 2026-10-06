@@ -9,15 +9,11 @@ async function parseResponse(response) {
   return data;
 }
 
-export async function apiRequest(path, { method = 'GET', token, body } = {}) {
-  const headers = { 'Content-Type': 'application/json' };
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
+export async function apiRequest(path, { method = 'GET', body } = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
     method,
-    headers,
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: body ? JSON.stringify(body) : undefined,
     signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(20000) : undefined,
   });
@@ -25,17 +21,17 @@ export async function apiRequest(path, { method = 'GET', token, body } = {}) {
   return parseResponse(response);
 }
 
-export function loginRequest(email, password) {
+export function loginRequest(email, password, remember = true) {
   return apiRequest('/api/auth/login', {
     method: 'POST',
-    body: { email, password },
+    body: { email, password, remember },
   });
 }
 
-export function getMeRequest(token) {
-  return apiRequest('/api/auth/me', { token });
+export function getMeRequest() {
+  return apiRequest('/api/auth/me');
 }
 
-export function logoutRequest(token) {
-  return apiRequest('/api/auth/logout', { method: 'POST', token });
+export function logoutRequest() {
+  return apiRequest('/api/auth/logout', { method: 'POST' });
 }

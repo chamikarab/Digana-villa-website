@@ -32,7 +32,7 @@ const Login = () => {
 
     setIsSubmitting(true);
     try {
-      await login(form.email, form.password);
+      await login(form.email, form.password, form.remember);
     } catch (err) {
       setError(err.message || 'Login failed. Please try again.');
     } finally {
