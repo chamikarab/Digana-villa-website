@@ -25,6 +25,9 @@ build/
 .env
 .env.*
 
+# Backend JSON database
+backend/data/db.json
+
 # OS files
 .DS_Store
 Thumbs.db
