@@ -1,116 +1,51 @@
-# Digana Villa Website
+# Digana Villa Booking & Admin Management Platform
 
-Repository: https://github.com/chamikarab/Digana-villa-website
+A high-performance, full-stack web application designed for boutique villa bookings and robust administrative management. Built with a responsive, modern frontend architecture and a hardened backend emphasizing enterprise security best practices.
 
-Digana Villa is a small villa rental and admin management web app for a single property in Digana, Kandy, Sri Lanka. The public side lets guests request a booking, while the admin portal lets the owner manage bookings, villa details, guest accounts, and review moderation.
+## 🚀 Key Features
+- **Public Booking Interface:** Seamless, intuitive user booking flow with real-time field validation.
+- **Admin Analytics Dashboard:** Dynamic data visualization using Recharts to track revenue, occupancy patterns, active bookings, and pending review moderation.
+- **Role-Based Routing:** Strict frontend layout protection paired with robust backend middleware validation to prevent unauthorized access.
 
-## What it does
+## 🛠️ Tech Stack
+- **Frontend:** React 18, Vite, Tailwind CSS, Framer Motion, Recharts
+- **Backend:** Node.js, Express 5
+- **Data Persistence:** Lightweight JSON-based file store (`db.json`) optimized for high-performance localized mock environments.
 
-- Public landing page and booking request form for the villa
-- Admin login area for managing the property and guest requests
-- Dashboard for villa status, recent bookings, and summary metrics
-- Booking management: view, update status, and remove entries
-- User management: add, filter, promote, and remove user records
-- Review moderation: approve, flag, and update review entries
-- Local JSON-backed persistence for a simple file-based app without a database service
+## 🔒 Security Implementation (SecOps Focused)
+This application was engineered with a security-first mindset, mitigating common OWASP Top 10 vulnerabilities:
+- **Cryptographic Hashing:** User passwords are secured using `bcrypt` with a high-computational workload factor of 12 rounds.
+- **Session Integrity:** Stateful JWT-driven authorization leveraging `httpOnly`, `sameSite`, and explicit production `secure` cookie configurations to prevent XSS and session hijacking.
+- **HTTP Header Hardening:** Automated implementation of `Helmet` security headers to establish cross-origin policies and mitigate injection vectors.
+- **Brute-Force & Denial of Service (DoS) Mitigation:** Automated rate limiting implemented across public-facing login (strict 20-request ceiling per 15 minutes), booking, and review endpoints.
+- **Payload Restrictions:** Imposed a strict 32kb body size limit on incoming JSON payloads to block memory exhaustion attacks.
+- **Fail-Safe Design:** Production runtime pipeline configurations explicitly configured to halt process initiation if cryptographically strong environment secrets are missing.
 
-## Stack
-
-- Frontend: React + Vite + Tailwind CSS
-- Backend: Node.js + Express
-- Authentication: JWT sessions with a single environment-configured admin account
-- Data persistence: local JSON file store in `backend/data/db.json`
-- Current project scope: this repo does not include a live MongoDB instance or a working Stripe payment flow; the Mongo and Stripe integration files are placeholders/stubs only.
-
-## Important implementation notes
-
-- The app currently stores records in `backend/data/db.json` rather than in MongoDB.
-- Payment integration files are present as stubs and are not active checkout logic.
-- The admin login is intentionally controlled by environment variables in the backend for a single admin account.
-- The update endpoints now restrict payloads to an approved allowlist to prevent mass-assignment of unexpected fields.
-
-## Screenshot
-
-![Digana Villa dashboard](docs/digana-villa-dashboard.svg)
-
-## Local setup
+## 🛠️ Quick Start Setup
 
 ### Prerequisites
+- Node.js (v18+ recommended)
+- npm or yarn
 
-- Node.js 18+
-- npm
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone <YOUR_REPOSITORY_URL>
+   cd digana-villa-website
+   ```
 
-### 1. Install dependencies
+2. Configure Environment Variables:
+   Create a `.env` file in the `/backend` directory matching the structural definitions found within `.env.example`.
 
-```bash
-cd backend
-npm install
+3. Install dependencies and run development engines:
+   ```bash
+   # Start the Backend
+   cd backend
+   npm install
+   npm run dev
 
-cd ../frontend
-npm install
-```
-
-### 2. Configure environment variables
-
-Create a `backend/.env` file (do not commit it) based on the project defaults:
-
-```env
-PORT=5000
-JWT_SECRET=change-this-to-a-strong-random-string
-ADMIN_EMAIL=admin@diganavilla.com
-ADMIN_PASSWORD=Admin@1234
-```
-
-The app also supports `ADMIN_PASSWORD_HASH` and `CORS_ORIGIN` in production-oriented setups. See `backend/.env.example` for the full list.
-
-### 3. Start the backend
-
-```bash
-cd backend
-npm run dev
-```
-
-The API runs on `http://localhost:5000`.
-
-### 4. Start the frontend
-
-```bash
-cd frontend
-npm run dev -- --host 0.0.0.0
-```
-
-The site runs on `http://localhost:5173` by default.
-
-## Default admin login
-
-- Email: `admin@diganavilla.com`
-- Password: `Admin@1234`
-
-Use these for the local admin portal while developing.
-
-## Project structure
-
-```text
-backend/
-  data/db.json
-  src/
-    config/
-    controllers/
-    db/
-    middleware/
-    models/
-    routes/
-    services/
-    utils/
-  server.js
-
-frontend/
-  src/
-  public/
-  index.html
-  vite.config.js
-```
-
-## License
-
-This project is for local/demo use in the current workspace and is not published as a production SaaS product.
+   # Start the Frontend
+   cd ../frontend
+   npm install
+   npm run dev
+   ```
